@@ -1,24 +1,28 @@
 import os
+import argparse
 
-def create_files():
-    # Ustalamy bazowy katalog jako bieżący katalog roboczy
+def create_files(lab, num):
     base_dir = os.getcwd()
+    file_patterns = ["lab{}_{}.py", "test_lab{}_{}.py"]
 
-    # Definiujemy wzorce nazw plików
-    file_patterns = ["lab4_{}.py", "test_lab4_{}.py"]
-
-    for i in range(1, 12):
-        # Dla każdego wzorca tworzymy plik
+    for i in range(1, num + 1):
         for pattern in file_patterns:
-            file_name = pattern.format(i)  # tworzymy nazwę pliku
-            file_path = os.path.join(base_dir, file_name)  # tworzymy pełną ścieżkę do pliku
+            file_name = pattern.format(lab, i)
+            file_path = os.path.join(base_dir, file_name)
 
-            # Tworzymy plik, jeśli nie istnieje
             if not os.path.exists(file_path):
                 with open(file_path, "w") as file:
-                    file.write("# Pusty plik Pythona o nazwie " + file_name)  # możesz tutaj wstawić dowolną zawartość
+                    if pattern.startswith("lab"):
+                        file.write("# Zadanie {}\n".format(i))
+                    else:
+                        file.write("# Testy - Zadanie {}\n".format(i))
 
-    print("Pliki zostały utworzone.")
+    print("Files have been created.")
 
-# Wywołujemy funkcję
-create_files()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Create lab files.')
+    parser.add_argument('lab', type=int, help='Lab number')
+    parser.add_argument('--num', type=int, default=15, help='Number of files to create, default is 15')
+    args = parser.parse_args()
+
+    create_files(args.lab, args.num)
